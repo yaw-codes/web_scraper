@@ -34,6 +34,51 @@ async def demo_basic_crawl():
                 print("Failed to crawl the URL.")
 
 
+async def demo_parrallel_crawl():
+    """Crawl multiple URLs in parallel."""
+    print("\n***2. Parallel Web Crawling***")
+    urls: List[str] = [
+        "https://news.ycombinator.com",
+        "https://www.wikipedia.org",
+        "https://www.python.org"
+    ]
+
+    async with AsyncWebCrawler() as crawler:
+
+        results: List[CrawlResult] = await crawler.arun_many(
+            urls=urls,
+                                                             )
+
+        print(f"Crawled {len(results)} URLs in parallel.")
+        for i, res in enumerate(results):
+            print(
+                f"{i + 1}. {urls[i]} - {'Success' if res.success else 'Failed'} "
+            )
+
+async def demo_fit_markdown():
+    """Generate focused markdown with LLM content filter"""
+    print("\n***3. Fit Markdown with LLM content filter***")
+    
+    async with AsyncWebCrawler() as crawler:
+        results = await crawler.arun(
+            "http://en.wikipedia.org/wiki/Python_(programming_language)",
+            config = CrawlerRunConfig(
+                markdown_generator=DefaultMarkdownGenerator(
+                    content_filter=PruningContentFilter(
+                    )
+            )
+        )
+        )
+
+        for i, res in enumerate(results):
+            print(f"Result {i + 1}:")
+            print(f"Success: {res.success}")
+            
+            if res.success:
+                print(f"Markdown length: {len(res.markdown.raw_markdown)} chars")
+                print(f"First 100 characters: {res.markdown.raw_markdown[:100]}...")
+            else:
+                print("Failed to crawl the URL.")
 
 
 
@@ -47,6 +92,7 @@ async def main():
     # Run all demos
 
     await demo_basic_crawl()
+    await demo_parrallel_crawl()
     # Add more demo functions here as needed
     print("\n***Demo Complete***")
     print("Check for any generated files (screenshots, PDFs, etc.) in the current directory.")
