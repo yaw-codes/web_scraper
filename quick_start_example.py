@@ -60,8 +60,8 @@ async def demo_fit_markdown():
     print("\n***3. Fit Markdown with LLM content filter***")
     
     async with AsyncWebCrawler() as crawler:
-        results = await crawler.arun(
-            "http://en.wikipedia.org/wiki/Python_(programming_language)",
+        results:CrawlResult = await crawler.arun(
+            url = "http://en.wikipedia.org/wiki/Python_(programming_language)",
             config = CrawlerRunConfig(
                 markdown_generator=DefaultMarkdownGenerator(
                     content_filter=PruningContentFilter(
