@@ -70,16 +70,8 @@ async def demo_fit_markdown():
         )
         )
 
-        for i, res in enumerate(results):
-            print(f"Result {i + 1}:")
-            print(f"Success: {res.success}")
-            
-            if res.success:
-                print(f"Markdown length: {len(res.markdown.raw_markdown)} chars")
-                print(f"First 100 characters: {res.markdown.raw_markdown[:100]}...")
-            else:
-                print("Failed to crawl the URL.")
-
+        print(f"Raw: {len(results.markdown.raw_markdown)} chars")
+        print(f"Fit: {len(results.markdown.fit_markdown)} chars")
 
 
 async def main():
@@ -93,6 +85,7 @@ async def main():
 
     await demo_basic_crawl()
     await demo_parrallel_crawl()
+    await demo_fit_markdown()
     # Add more demo functions here as needed
     print("\n***Demo Complete***")
     print("Check for any generated files (screenshots, PDFs, etc.) in the current directory.")
