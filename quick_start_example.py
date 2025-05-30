@@ -13,8 +13,9 @@ from crawl4ai import BFSDeepCrawlStrategy,DomainFilter, FilterChain
 from pathlib import Path
 import json
 
-__cur_dir__ = Path(__file__)
-
+__cur_dir__ = Path(__file__).parent.resolve()
+# Ensure the tmp directory exists
+(__cur_dir__ / "tmp").mkdir(exist_ok=True)
 
 async def demo_basic_crawl():
     """Basic web crawling example with markdown output."""
@@ -118,7 +119,35 @@ async def demo_media_and_links():
 
 
 async def demo_screenshot_and_pdf():
-    pass()
+    """Take screenshots and generate PDFs of a webpage."""
+    print("\n***5. Screenshot and PDF Generation***")
+
+    async with AsyncWebCrawler() as crawler:
+        results: List[CrawlResult] = await crawler.arun(
+            #url = "https://www.example.com",
+            url="https://en.wikipedia.org/wiki/Giant_anteater",
+            config=CrawlerRunConfig(
+                screenshot=True,
+                pdf=True
+            )
+        )
+
+        for i, res in enumerate(results):
+
+            if res.screenshot:
+                # Save screenshot
+                scrnshot_path = f"{__cur_dir__}/tmp/example_screenshot_{i + 1}.png"
+                with open(scrnshot_path, "wb") as f:
+                    f.write(base64.b64decode(res.screenshot))
+                print(f"Screenshot saved to {scrnshot_path}")
+
+            if res.pdf:
+                # Save PDF
+                pdf_path = f"{__cur_dir__}/tmp/example_pdf_{i + 1}.pdf"
+                with open(pdf_path, "wb") as f:
+                    f.write(res.pdf)
+                print(f"PDF saved to {pdf_path}")
+
 
 
 
@@ -135,7 +164,10 @@ async def main():
     # await demo_parrallel_crawl()
     # await demo_fit_markdown()
   
-    await demo_media_and_links()
+    # await demo_media_and_links()
+
+
+    await demo_screenshot_and_pdf()
     # Add more demo functions here as needed
 
 
